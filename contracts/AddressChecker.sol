@@ -25,7 +25,7 @@ contract AddressChecker is IChecker {
     }
 
     function _getSlice(bytes memory _payload, uint _start, uint _end) internal pure returns (bytes memory) {
-        require(_start < _payload.length && _end < _payload.length && _start < _end, "invalid indexes");
+        require(_start < _payload.length && _end <= _payload.length && _start < _end, "invalid indexes");
         bytes memory result = new bytes(_end - _start);
 
         for (uint i = _start; i < _end; i++) {

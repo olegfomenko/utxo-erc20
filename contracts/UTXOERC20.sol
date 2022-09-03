@@ -59,7 +59,7 @@ contract UTXOERC20 is IUTXOERC20, Ownable {
         emit UTXOSpent(_id, msg.sender);
 
         for (uint i = 0; i < _outs.length; i++) {
-            UTXO memory newUtxo = UTXO(utxo._token, utxo._version, _payload, false);
+            UTXO memory newUtxo = UTXO(utxo._token, utxo._version, _outs[i]._payload, false);
             utxos.push(newUtxo);
             emit UTXOCreated(utxos.length - 1, msg.sender);
         }
@@ -78,5 +78,3 @@ contract UTXOERC20 is IUTXOERC20, Ownable {
         return checkers[_id];
     }
 }
-
-
