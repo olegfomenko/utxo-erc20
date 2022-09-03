@@ -22,19 +22,19 @@ interface IUTXOERC20 {
     /// @param _amount amount to deposit
     /// @param _version payload version
     /// @param _payload bytes array that contains amount and information to unlock that tokens
-    function deposit(address _token, uint256 _amount, uint16 _version, bytes memory _payload) external returns (bool);
+    function deposit(address _token, uint256 _amount, uint16 _version, bytes memory _payload) external;
 
     /// @notice Withdraw ERC20 token from the contract balance.
     /// @param _to receiver address
-    /// @param _utxo_id UTXO id to withdraw
+    /// @param _utxoId UTXO id to withdraw
     /// @param _payload bytes array that contains information to unlock that tokens. Should satisfy UTXO payload and its version.
-    function withdraw(address _to, uint256 _utxo_id, bytes memory _payload) external returns (bool);
+    function withdraw(address _to, uint256 _utxoId, bytes memory _payload) external;
 
     /// @notice Transfer token from one UTXO to another
     /// @param _id UTXO id
     /// @param _payload bytes array that contains information to unlock that tokens. Should satisfy UTXO payload and its version.
     /// @param _outs OUT array that contains information about where to send tokens.
-    function transfer(uint16 _id, bytes memory _payload, OUT[] memory _outs) external returns (bool);
+    function transfer(uint16 _id, bytes memory _payload, OUT[] memory _outs) external;
 
     /// @notice Get UTXO by id
     /// @param _id UTXO id
