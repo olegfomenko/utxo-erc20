@@ -25,10 +25,9 @@ interface IUTXOERC20 {
     function deposit(address _token, uint256 _amount, uint16 _version, bytes memory _payload) external;
 
     /// @notice Withdraw ERC20 token from the contract balance.
-    /// @param _to receiver address
     /// @param _utxoId UTXO id to withdraw
     /// @param _payload bytes array that contains information to unlock that tokens. Should satisfy UTXO payload and its version.
-    function withdraw(address _to, uint256 _utxoId, bytes memory _payload) external;
+    function withdraw(uint256 _amount, uint256 _utxoId, bytes memory _payload) external;
 
     /// @notice Transfer token from one UTXO to another
     /// @param _id UTXO id
