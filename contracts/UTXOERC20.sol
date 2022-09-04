@@ -11,20 +11,22 @@ contract UTXOERC20 is IUTXOERC20, Ownable {
 
     constructor() public {}
 
-    function deposit(address _token, uint256 _amount, uint16 _version, bytes memory _payload) external override {
+    function deposit(address _token, uint256 _amount, uint16 _version, bytes[] memory _payloads) public override {
         require(checkers[_version] != address(0), "unsupported version");
 
-        IChecker(checkers[_version]).validateUTXO(_amount, _payload);
+        IChecker(checkers[_version]).validateUTXOs(_amount, _payloads);
         IERC20(_token).transferFrom(msg.sender, address(this), _amount);
 
-        UTXO memory utxo = UTXO(_token, _version, _payload, false);
-        utxos.push(utxo);
+        for (uint i = 0; i < _payloads.length; i++) {
+            UTXO memory utxo = UTXO(_token, _version, _payloads[i], false);
+            utxos.push(utxo);
+            emit UTXOCreated(utxos.length - 1, msg.sender);
+        }
 
-        emit UTXOCreated(utxos.length - 1, msg.sender);
-        emit Deposit(_token, msg.sender, utxos.length - 1, _amount);
+        emit Deposit(_token, msg.sender, _amount);
     }
 
-    function withdraw(uint256 _amount, uint256 _utxoId, bytes memory _payload) external override {
+    function withdraw(uint256 _amount, uint256 _utxoId, bytes memory _payload) public override {
         require(_utxoId < utxos.length, "UTXO id out of bound");
 
         UTXO memory utxo = utxos[_utxoId];
@@ -37,15 +39,17 @@ contract UTXOERC20 is IUTXOERC20, Ownable {
         IERC20(utxo._token).transfer(msg.sender, _amount);
 
         emit UTXOSpent(_utxoId, msg.sender);
-        emit Withdraw(utxo._token, msg.sender, _utxoId, _amount);
+        emit Withdraw(utxo._token, msg.sender, _amount);
     }
 
-    function transfer(uint16 _id, bytes memory _payload, OUT[] memory _outs) external override {
+    function transfer(uint16 _id, bytes memory _payload, OUT[] memory _outs) public override {
         require(_id < utxos.length, "UTXO id out of bound");
         require(_outs.length != 0, "invalid outs: can not be empty");
 
         UTXO memory utxo = utxos[_id];
         require(!utxo._spent, "UTXO has been spent");
+
+        IChecker(checkers[utxo._version]).check(msg.sender, utxo._payload, _payload);
 
         bytes[] memory _payloads = new bytes[](_outs.length);
         for (uint i = 0; i < _outs.length; i++) {
@@ -65,16 +69,16 @@ contract UTXOERC20 is IUTXOERC20, Ownable {
         }
     }
 
-    function getUTXO(uint256 _id) external override view returns (UTXO memory) {
+    function getUTXO(uint256 _id) public override view returns (UTXO memory) {
         require(_id < utxos.length, "UTXO id out of bound");
         return utxos[_id];
     }
 
-    function setVersion(uint16 _id, address _checker) external onlyOwner {
+    function setVersion(uint16 _id, address _checker) public onlyOwner {
         checkers[_id] = _checker;
     }
 
-    function version(uint16 _id) external view returns (address) {
+    function version(uint16 _id) public view returns (address) {
         return checkers[_id];
     }
 }

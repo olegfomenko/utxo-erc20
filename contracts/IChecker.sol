@@ -10,10 +10,15 @@ interface IChecker {
     /// @param _proofPayload payload sent by caller
     function check(address _caller, bytes memory _utxoPayload, bytes memory _proofPayload) external pure;
 
-    /// @notice Validate token deposit payload.
-    /// @param _amount deposit ERC20 token amount
-    /// @param _utxoPayload deposit UTXO payload
+    /// @notice Validate UTXO deposit payload
+    /// @param _amount deposit amount
+    /// @param _utxoPayload payload to create UTXOs with
     function validateUTXO(uint256 _amount, bytes memory _utxoPayload) external pure;
+
+    /// @notice Validate UTXO deposit payloads
+    /// @param _amount toltal deposit amount
+    /// @param _utxoPayloads list of payloads to create UTXOs with
+    function validateUTXOs(uint256 _amount, bytes[] memory _utxoPayloads) external pure;
 
     /// @notice Validate token transfer OUTs' payloads.
     /// @param _utxoPayload UTXO payload

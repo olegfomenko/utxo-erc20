@@ -19,10 +19,10 @@ interface IUTXOERC20 {
 
     /// @notice Depositing ERC20 token to the contract. You should approve the transfer on token contract before.
     /// @param _token ERC20 token address to deposit
-    /// @param _amount amount to deposit
+    /// @param _amount total amount to deposit
     /// @param _version payload version
-    /// @param _payload bytes array that contains amount and information to unlock that tokens
-    function deposit(address _token, uint256 _amount, uint16 _version, bytes memory _payload) external;
+    /// @param _payloads array of payloads that contains amount and information to unlock that tokens
+    function deposit(address _token, uint256 _amount, uint16 _version, bytes[] memory _payloads) external;
 
     /// @notice Withdraw ERC20 token from the contract balance.
     /// @param _utxoId UTXO id to withdraw
@@ -52,14 +52,12 @@ interface IUTXOERC20 {
     event Deposit(
         address indexed token,
         address indexed from,
-        uint256 indexed utxo_id,
         uint256 amount
     );
 
     event Withdraw(
         address indexed token,
         address indexed to,
-        uint256 indexed utxo_id,
         uint256 amount
     );
 }
