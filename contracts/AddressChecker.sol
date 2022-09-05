@@ -31,6 +31,7 @@ contract AddressChecker is IChecker {
         uint256 sum = 0;
         for (uint i = 0; i < _payloads.length; i++) {
             sum = sum + uint256(bytes32(_getSlice(_payloads[i], 0, AMOUNT_BUF_SIZE)));
+            require(address(bytes20(_getSlice(_payloads[i], AMOUNT_BUF_SIZE, _payloads[i].length))) != address(0), "invalid address");
         }
         require(sum == uint256(bytes32(_getSlice(_utxoPayload, 0, AMOUNT_BUF_SIZE))), "invalid payload amount sum");
     }
