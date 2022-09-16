@@ -12,11 +12,6 @@ interface IUTXOERC20 {
         bool _spent;
     }
 
-    struct OUT {
-        uint16 _version;
-        bytes _payload;
-    }
-
     /// @notice Depositing ERC20 token to the contract. You should approve the transfer on token contract before.
     /// @param _token ERC20 token address to deposit
     /// @param _amount total amount to deposit
@@ -32,8 +27,8 @@ interface IUTXOERC20 {
     /// @notice Transfer token from one UTXO to another
     /// @param _id UTXO id
     /// @param _payload bytes array that contains information to unlock that tokens. Should satisfy UTXO payload and its version.
-    /// @param _outs OUT array that contains information about where to send tokens.
-    function transfer(uint16 _id, bytes memory _payload, OUT[] memory _outs) external;
+    /// @param _outPayloads array that contains information about output UTXO paylods
+    function transfer(uint16 _id, bytes memory _payload,  bytes[] memory _outPayloads) external;
 
     /// @notice Get UTXO by id
     /// @param _id UTXO id

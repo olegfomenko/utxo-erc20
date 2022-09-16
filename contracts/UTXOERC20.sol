@@ -15,7 +15,7 @@ contract UTXOERC20 is IUTXOERC20, Ownable {
 
         IERC20(_token).transferFrom(msg.sender, address(this), _amount);
 
-        for (uint i = 0; i < _payloads.length; i++) {
+        for (uint256 i = 0; i < _payloads.length; i++) {
             UTXO memory utxo = UTXO(_token, _version, _payloads[i], false);
             utxos.push(utxo);
             emit UTXOCreated(utxos.length - 1, msg.sender);
@@ -39,7 +39,7 @@ contract UTXOERC20 is IUTXOERC20, Ownable {
         emit Withdraw(utxo._token, msg.sender, _amount);
     }
 
-    function transfer(uint16 _id, bytes memory _payload, OUT[] memory _outs) public override {
+    function transfer(uint16 _id, bytes memory _payload, bytes[] memory _outs) public override {
         require(_id < utxos.length, "UTXO id out of bound");
         require(_outs.length != 0, "invalid outs: can not be empty");
 
@@ -47,21 +47,17 @@ contract UTXOERC20 is IUTXOERC20, Ownable {
         require(!utxo._spent, "UTXO has been spent");
         require(IChecker(checkers[utxo._version]).check(msg.sender, utxo._payload, _payload), "UTXO conditions is not satisfied");
 
-        bytes[] memory _payloads = new bytes[](_outs.length);
-        for (uint i = 0; i < _outs.length; i++) {
-            require(_outs[i]._version == utxo._version, "invalide OUT version");
-            _payloads[i] = _outs[i]._payload;
-        }
-
-        require(IChecker(checkers[utxo._version]).validateTransfer(utxo._payload, _payloads), "invalide transfer payloads");
+        require(IChecker(checkers[utxo._version]).validateTransfer(utxo._payload, _outs), "invalide transfer payloads");
 
         utxos[_id]._spent = true;
         emit UTXOSpent(_id, msg.sender);
 
-        for (uint i = 0; i < _outs.length; i++) {
-            UTXO memory newUtxo = UTXO(utxo._token, utxo._version, _outs[i]._payload, false);
+        uint256 utxoSz = utxos.length;
+        for (uint256 i = 0; i < _outs.length; i++) {
+            UTXO memory newUtxo = UTXO(utxo._token, utxo._version, _outs[i], false);
             utxos.push(newUtxo);
-            emit UTXOCreated(utxos.length - 1, msg.sender);
+            emit UTXOCreated(utxoSz, msg.sender);
+            utxoSz += 1;
         }
     }
 

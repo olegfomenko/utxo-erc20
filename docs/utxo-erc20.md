@@ -15,8 +15,6 @@ where we are storing the UTXO data in next format: **<token_address,version,payl
 In the payload we can store any information about amounts and spending requirements.
 Because we are using bytes array for payload, the data can be stored clear or encrypted, depending on UTXO's version.
 
-We also defined the another one data struct that holds transfer outputs and spawn new UTXOs: **<version,payload>**
-
 ### Events 
 Also, there are the following events defined and emitted by contract operations:
 
