@@ -5,10 +5,9 @@ pragma solidity ^0.8.0;
  */
 interface IChecker {
     /// @notice Depositing ERC20 token to the contract. You should approve the transfer on token contract before.
-    /// @param _caller who wants to spend tokens
     /// @param _utxoPayload payload stored on UTXO
-    /// @param _proofPayload payload sent by caller
-    function check(address _caller, bytes memory _utxoPayload, bytes memory _proofPayload) external pure returns (bool);
+    /// @param _proofPayload concatenation msg.sender || payload sent by caller
+    function check(bytes memory _utxoPayload, bytes memory _proofPayload) external pure returns (bool);
 
     /// @notice Validate UTXO deposit payload
     /// @param _amount deposit amount

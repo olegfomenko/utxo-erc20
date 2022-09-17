@@ -6,8 +6,8 @@ contract AddressChecker is IChecker {
     uint8 public constant AMOUNT_BUF_SIZE = 32;
     uint8 public constant ADDRESS_BUF_SIZE = 20;
 
-    function check(address _caller, bytes memory _utxoPayload, bytes memory /*_proofPayload*/) public pure override returns (bool) {
-        return _caller == _bytesToAddress(_utxoPayload);
+    function check(bytes memory _utxoPayload, bytes memory _proofPayload) public pure override returns (bool) {
+        return _bytesToAddress(_proofPayload) == _bytesToAddress(_utxoPayload);
     }
 
      function validateUTXO(uint256 _amount, bytes memory _utxoPayload) external pure override returns (bool){
@@ -35,7 +35,7 @@ contract AddressChecker is IChecker {
 
     function validateTransfer(bytes memory _utxoPayload, bytes[] memory _payloads) public pure override returns (bool) {
         uint256 _sum = 0;
-        for (uint i = 0; i < _payloads.length; i++) {
+        for (uint256 i = 0; i <  _payloads.length; i++) {
             _sum = _sum + _bytesToUint256(_payloads[i]);
             if(_bytesToAddress(_payloads[i]) == address(0)) {
                 return false;

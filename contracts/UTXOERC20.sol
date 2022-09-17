@@ -15,7 +15,7 @@ contract UTXOERC20 is IUTXOERC20, Ownable {
 
         IERC20(_token).transferFrom(msg.sender, address(this), _amount);
 
-        for (uint256 i = 0; i < _payloads.length; i++) {
+        for (uint i = 0; i < _payloads.length; i++) {
             UTXO memory utxo = UTXO(_token, _version, _payloads[i], false);
             utxos.push(utxo);
             emit UTXOCreated(utxos.length - 1, msg.sender);
@@ -30,7 +30,9 @@ contract UTXOERC20 is IUTXOERC20, Ownable {
         UTXO memory utxo = utxos[_utxoId];
         require(!utxo._spent, "UTXO has been spent");
         require(IChecker(checkers[utxo._version]).validateUTXO(_amount, utxo._payload), "invalid UTXO");
-        require(IChecker(checkers[utxo._version]).check(msg.sender, utxo._payload, _payload), "UTXO conditions is not satisfied");
+
+        bytes memory _payloadWithSender = bytes.concat(abi.encodePacked(msg.sender), _payload);
+        require(IChecker(checkers[utxo._version]).check(utxo._payload, _payloadWithSender), "UTXO conditions is not satisfied");
 
         utxos[_utxoId]._spent = true;
         IERC20(utxo._token).transfer(msg.sender, _amount);
@@ -45,7 +47,9 @@ contract UTXOERC20 is IUTXOERC20, Ownable {
 
         UTXO memory utxo = utxos[_id];
         require(!utxo._spent, "UTXO has been spent");
-        require(IChecker(checkers[utxo._version]).check(msg.sender, utxo._payload, _payload), "UTXO conditions is not satisfied");
+
+        bytes memory _payloadWithSender = bytes.concat(abi.encodePacked(msg.sender), _payload);
+        require(IChecker(checkers[utxo._version]).check(utxo._payload, _payloadWithSender), "UTXO conditions is not satisfied");
 
         require(IChecker(checkers[utxo._version]).validateTransfer(utxo._payload, _outs), "invalide transfer payloads");
 
@@ -53,7 +57,7 @@ contract UTXOERC20 is IUTXOERC20, Ownable {
         emit UTXOSpent(_id, msg.sender);
 
         uint256 utxoSz = utxos.length;
-        for (uint256 i = 0; i < _outs.length; i++) {
+        for (uint i = 0; i < _outs.length; i++) {
             UTXO memory newUtxo = UTXO(utxo._token, utxo._version, _outs[i], false);
             utxos.push(newUtxo);
             emit UTXOCreated(utxoSz, msg.sender);
