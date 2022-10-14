@@ -10,6 +10,7 @@ contract UTXOERC20 is IUTXOERC20, Ownable {
     mapping (uint16 => address) public checkers;
 
     function deposit(address _token, uint256 _amount, uint16 _version, bytes[] memory _payloads) public override {
+        require(_payloads.length > 0);
         require(checkers[_version] != address(0), "unsupported version");
         require(IChecker(checkers[_version]).validateUTXO(_amount, _payloads), "invalid UTXO");
 
