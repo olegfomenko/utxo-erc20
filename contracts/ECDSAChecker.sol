@@ -40,18 +40,18 @@ contract ECDSAChecker is IChecker {
         return _getAddress(_utxoPayload) == _signer;
     }
 
-    function validateUTXO(uint256 _amount, bytes memory _utxoPayload) external pure override returns (bool){
+    function validateUTXO(uint256 _amount, bytes memory _utxoPayload) external override returns (bool){
         bytes[] memory _toValidate = new bytes[](1);
         _toValidate[0] = _utxoPayload;
         return validateUTXO(_amount, _toValidate);
     }
 
-    function validateUTXO(uint256 _amount, bytes[] memory _payloads) public pure override returns (bool){
+    function validateUTXO(uint256 _amount, bytes[] memory _payloads) public override returns (bool){
         (uint256 _sum, bool _validated) = _getSumAndValidate(_payloads);
         return _validated && _sum == _amount;
     }
 
-    function validateTransfer(bytes[] memory _in, bytes[] memory _out) public pure override returns (bool) {
+    function validateTransfer(bytes[] memory _in, bytes[] memory _out) public override returns (bool) {
         uint256 _sumIn  = _getSum(_in);
         return validateUTXO(_sumIn, _out);
     }
@@ -66,15 +66,23 @@ contract ECDSAChecker is IChecker {
         return _sum;
     }
 
-    function _getSumAndValidate(bytes[] memory _payloads) internal pure returns (uint256, bool) {
+    function _getSumAndValidate(bytes[] memory _payloads) internal returns (uint256, bool) {
         uint256 _sum = 0;
 
         for (uint256 _i = 0; _i < _payloads.length; _i++) {
-            _sum = _sum + _getAmount(_payloads[_i]);
             if(_getAddress(_payloads[_i]) == address(0) || _payloads[_i].length != FULL_SIZE) {
                 return (0, false);
             }
 
+            address _addr = _getAddress(_payloads[_i]);
+            uint256 _index = uint256(_getIndex(_payloads[_i]));
+
+            if (used[_addr][_index]) {
+                return (0, false);
+            }
+
+            used[_addr][_index] = true;
+            _sum = _sum + _getAmount(_payloads[_i]);
         }
 
         return (_sum, true);

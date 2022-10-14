@@ -50,11 +50,11 @@ contract AddressChecker is IChecker {
         uint256 _sum = 0;
 
         for (uint256 _i = 0; _i < _payloads.length; _i++) {
-            _sum = _sum + _getAmount(_payloads[_i]);
             if(_getAddress(_payloads[_i]) == address(0) || _payloads[_i].length != FULL_SIZE) {
                 return (0, false);
             }
 
+            _sum = _sum + _getAmount(_payloads[_i]);
         }
 
         return (_sum, true);
