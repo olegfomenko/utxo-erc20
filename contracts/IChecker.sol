@@ -20,7 +20,7 @@ interface IChecker {
     function validateUTXO(uint256 _amount, bytes[] memory _utxoPayloads) external pure returns (bool);
 
     /// @notice Validate token transfer OUTs' payloads.
-    /// @param _utxoPayload UTXO payload
-    /// @param _payloads OUTs' paloads
-    function validateTransfer(bytes memory _utxoPayload, bytes[] memory _payloads) external pure returns (bool);
+    /// @param _in UTXO payload
+    /// @param _out OUTs' paloads
+    function validateTransfer(bytes[] memory _in, bytes[] memory _out) external pure returns (bool);
 }
