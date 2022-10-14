@@ -44,6 +44,10 @@ Checker contract defines the certain version UTXO payload meaning.
 It is responsible for payload validation and payload requirements check before spending. 
 
 ### Address Checker
-Currently, only [Address Checker](../contracts/AddressChecker.sol) is available.
+[Address Checker Contract](../contracts/AddressChecker.sol)
+
 That checker encodes amount and address bytes in payload as it is. 
 The check method will return __true__ only if msg.sender is equal to stored address in payload.  
+
+### ECDSA Checker
+[ECDSA Checker Contract](../contracts/ECDSAChecker.sol)

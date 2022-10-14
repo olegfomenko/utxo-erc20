@@ -25,10 +25,10 @@ interface IUTXOERC20 {
     function withdraw(uint256 _amount, uint256 _utxoId, bytes memory _payload) external;
 
     /// @notice Transfer token from one UTXO to another
-    /// @param _id UTXO id
-    /// @param _payload bytes array that contains information to unlock that tokens. Should satisfy UTXO payload and its version.
-    /// @param _outPayloads array that contains information about output UTXO paylods
-    function transfer(uint16 _id, bytes memory _payload,  bytes[] memory _outPayloads) external;
+    /// @param _ids input UTXO id
+    /// @param _payloads array that contains paylodas to unlock that tokens. Should satisfy corresponsing UTXO payload and its version.
+    /// @param _outPayloads output UTXO paylods
+    function transfer(uint256[] memory _ids, bytes[] memory _payloads,  bytes[] memory _outPayloads) external;
 
     /// @notice Get UTXO by id
     /// @param _id UTXO id
