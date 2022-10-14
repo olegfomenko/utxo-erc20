@@ -27,18 +27,18 @@ contract UTXOERC20 is IUTXOERC20, Ownable {
     function withdraw(uint256 _amount, uint256 _utxoId, bytes memory _payload) public override {
         require(_utxoId < utxos.length, "UTXO id out of bound");
 
-        UTXO memory utxo = utxos[_utxoId];
-        require(!utxo._spent, "UTXO has been spent");
-        require(IChecker(checkers[utxo._version]).validateUTXO(_amount, utxo._payload), "invalid UTXO");
+        UTXO memory _utxo = utxos[_utxoId];
+        require(!_utxo._spent, "UTXO has been spent");
+        require(IChecker(checkers[_utxo._version]).validateUTXO(_amount, _utxo._payload), "invalid UTXO");
 
         bytes memory _payloadWithSender = bytes.concat(abi.encodePacked(msg.sender), _payload);
-        require(IChecker(checkers[utxo._version]).check(utxo._payload, _payloadWithSender), "UTXO conditions is not satisfied");
+        require(IChecker(checkers[_utxo._version]).check(_utxo._payload, _payloadWithSender), "UTXO conditions is not satisfied");
 
         utxos[_utxoId]._spent = true;
-        IERC20(utxo._token).transfer(msg.sender, _amount);
+        IERC20(_utxo._token).transfer(msg.sender, _amount);
 
         emit UTXOSpent(_utxoId, msg.sender);
-        emit Withdraw(utxo._token, msg.sender, _amount);
+        emit Withdraw(_utxo._token, msg.sender, _amount);
     }
 
     function transfer(uint256[] memory _ids, bytes[] memory _payloads, bytes[] memory _out) public override {
@@ -68,12 +68,12 @@ contract UTXOERC20 is IUTXOERC20, Ownable {
 
         require(IChecker(checkers[_version]).validateTransfer(_in, _out), "invalide in-out paylods");
 
-        uint256 utxoSz = utxos.length;
+        uint256 _utxoSz = utxos.length;
         for (uint _i = 0; _i < _out.length; _i++) {
-            UTXO memory newUtxo = UTXO(_token, _version, _out[_i], false);
-            utxos.push(newUtxo);
-            emit UTXOCreated(utxoSz, msg.sender);
-            utxoSz += 1;
+            UTXO memory _newUtxo = UTXO(_token, _version, _out[_i], false);
+            utxos.push(_newUtxo);
+            emit UTXOCreated(_utxoSz, msg.sender);
+            _utxoSz += 1;
         }
     }
 

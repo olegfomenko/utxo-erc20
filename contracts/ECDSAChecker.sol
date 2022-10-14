@@ -40,10 +40,10 @@ contract ECDSAChecker is IChecker {
         return _getAddress(_utxoPayload) == _signer;
     }
 
-     function validateUTXO(uint256 _amount, bytes memory _utxoPayload) external pure override returns (bool){
-        bytes[] memory toValidate = new bytes[](1);
-        toValidate[0] = _utxoPayload;
-        return validateUTXO(_amount, toValidate);
+    function validateUTXO(uint256 _amount, bytes memory _utxoPayload) external pure override returns (bool){
+        bytes[] memory _toValidate = new bytes[](1);
+        _toValidate[0] = _utxoPayload;
+        return validateUTXO(_amount, _toValidate);
     }
 
     function validateUTXO(uint256 _amount, bytes[] memory _payloads) public pure override returns (bool){
@@ -59,8 +59,8 @@ contract ECDSAChecker is IChecker {
     function _getSum(bytes[] memory _payloads) internal pure returns (uint256) {
         uint256 _sum = 0;
 
-        for (uint256 i = 0; i <  _payloads.length; i++) {
-            _sum = _sum + _getAmount(_payloads[i]);
+        for (uint256 _i = 0; _i <  _payloads.length; _i++) {
+            _sum = _sum + _getAmount(_payloads[_i]);
         }
 
         return _sum;
@@ -69,9 +69,9 @@ contract ECDSAChecker is IChecker {
     function _getSumAndValidate(bytes[] memory _payloads) internal pure returns (uint256, bool) {
         uint256 _sum = 0;
 
-        for (uint256 i = 0; i <  _payloads.length; i++) {
-            _sum = _sum + _getAmount(_payloads[i]);
-            if(_getAddress(_payloads[i]) == address(0) || _payloads[i].length != FULL_SIZE) {
+        for (uint256 _i = 0; _i < _payloads.length; _i++) {
+            _sum = _sum + _getAmount(_payloads[_i]);
+            if(_getAddress(_payloads[_i]) == address(0) || _payloads[_i].length != FULL_SIZE) {
                 return (0, false);
             }
 
@@ -98,8 +98,8 @@ contract ECDSAChecker is IChecker {
 
     function _getSlice(bytes memory _payload, uint _start, uint _length) internal pure returns (bytes memory) {
         bytes memory _result = new bytes(_length);
-        for (uint i = _start; i < _start + _length && i < _payload.length; i++) {
-            _result[i - _start] = _payload[i];
+        for (uint _i = _start; _i < _start + _length && _i < _payload.length; _i++) {
+            _result[_i - _start] = _payload[_i];
         }
 
         return _result;
