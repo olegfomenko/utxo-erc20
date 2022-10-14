@@ -22,7 +22,7 @@ contract UTXOERC20 is IUTXOERC20, Ownable {
             emit UTXOCreated(utxos.length - 1, msg.sender);
         }
 
-        emit Deposit(_token, msg.sender, _amount);
+        emit Deposited(_token, msg.sender, _amount);
     }
 
     function withdraw(uint256 _amount, uint256 _utxoId, bytes memory _payload) public override {
@@ -39,7 +39,7 @@ contract UTXOERC20 is IUTXOERC20, Ownable {
         IERC20(_utxo._token).transfer(msg.sender, _amount);
 
         emit UTXOSpent(_utxoId, msg.sender);
-        emit Withdraw(_utxo._token, msg.sender, _amount);
+        emit Withdrawn(_utxo._token, msg.sender, _amount);
     }
 
     function transfer(uint256[] memory _ids, bytes[] memory _payloads, bytes[] memory _out) public override {

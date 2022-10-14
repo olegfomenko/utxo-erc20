@@ -44,13 +44,13 @@ interface IUTXOERC20 {
         address indexed spender
     );
 
-    event Deposit(
+    event Deposited(
         address indexed token,
         address indexed from,
         uint256 amount
     );
 
-    event Withdraw(
+    event Withdrawn(
         address indexed token,
         address indexed to,
         uint256 amount
