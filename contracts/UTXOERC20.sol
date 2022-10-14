@@ -16,8 +16,8 @@ contract UTXOERC20 is IUTXOERC20, Ownable {
         IERC20(_token).transferFrom(msg.sender, address(this), _amount);
 
         for (uint i = 0; i < _payloads.length; i++) {
-            UTXO memory utxo = UTXO(_token, _version, _payloads[i], false);
-            utxos.push(utxo);
+            UTXO memory _utxo = UTXO(_token, _version, _payloads[i], false);
+            utxos.push(_utxo);
             emit UTXOCreated(utxos.length - 1, msg.sender);
         }
 
