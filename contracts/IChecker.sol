@@ -1,0 +1,27 @@
+pragma solidity ^0.8.0;
+
+/**
+ * @title UTXO ERC20 Spend conditions checker interface
+ */
+interface IChecker {
+    /// @notice Depositing ERC20 token to the contract. You should approve the transfer on token contract before.
+    /// @param _in payload stored on UTXO that we want to spend
+    /// @param _proof concatenation msg.sender || payload sent by caller
+    /// @param _out contains output UTXO payloads
+    function check(bytes memory _in, bytes memory _proof, bytes[] memory _out) external view returns (bool);
+
+    /// @notice Validate UTXO deposit payload
+    /// @param _amount deposit amount
+    /// @param _utxoPayload payload to create UTXOs with
+    function validateUTXO(uint256 _amount, bytes memory _utxoPayload) external returns (bool);
+
+    /// @notice Validate UTXO deposit payloads
+    /// @param _amount toltal deposit amount
+    /// @param _utxoPayloads list of payloads to create UTXOs with
+    function validateUTXO(uint256 _amount, bytes[] memory _utxoPayloads) external returns (bool);
+
+    /// @notice Validate token transfer OUTs' payloads.
+    /// @param _in UTXO payload
+    /// @param _out OUTs' paloads
+    function validateTransfer(bytes[] memory _in, bytes[] memory _out) external returns (bool);
+}
