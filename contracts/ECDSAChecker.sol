@@ -8,7 +8,7 @@ import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
  * @title UTXO ERC20 Spend conditions checker implementation
  * Address checker defines the following UTXO payload format: amount_32_bytes | address_20_bytes | index_32_bytes.
  * Every address can have only one UTXO for certain index.
- * Proof payload contains the ECDSA signature of index value.
+ * Proof payload contains the ECDSA signature of index and outs array.
  * Only if recovered address or message sender is equal to payload address utxo will be spent.
  */
 contract ECDSAChecker is IChecker {
@@ -29,15 +29,17 @@ contract ECDSAChecker is IChecker {
 
     mapping(address => mapping(uint256 => bool)) public used;
 
-    function check(bytes memory _utxoPayload, bytes memory _proofPayload) public pure override returns (bool) {
-        bytes32 _id = _getIndex(_utxoPayload);
-
+    function check(bytes memory _utxoPayload, bytes memory _proofPayload, bytes[] memory _out) public pure override returns (bool) {
         if (_proofPayload.length == ADDRESS_BUF_SIZE) {
             return _getAddress(_utxoPayload) == address(bytes20(_proofPayload));
         }
 
-        address _signer = _id.toEthSignedMessageHash().recover(_getSignature(_proofPayload));
-        return _getAddress(_utxoPayload) == _signer;
+        bytes memory _toHash = abi.encodePacked(_getIndex(_utxoPayload));
+        for (uint _i = 0; _i < _out.length; _i++) {
+            _toHash = abi.encodePacked(_toHash, _out[_i]);
+        }
+    
+        return _getAddress(_utxoPayload) == keccak256(_toHash).toEthSignedMessageHash().recover(_getSignature(_proofPayload));
     }
 
     function validateUTXO(uint256 _amount, bytes memory _utxoPayload) external override returns (bool){
@@ -75,7 +77,7 @@ contract ECDSAChecker is IChecker {
             }
 
             address _addr = _getAddress(_payloads[_i]);
-            uint256 _index = uint256(_getIndex(_payloads[_i]));
+            uint256 _index = _getIndex(_payloads[_i]);
 
             if (used[_addr][_index]) {
                 return (0, false);
@@ -88,8 +90,8 @@ contract ECDSAChecker is IChecker {
         return (_sum, true);
     }
 
-    function _getIndex(bytes memory _payload) internal pure returns (bytes32) {
-        return bytes32(_getSlice(_payload, ID_STARTS, ID_STARTS + ID_BUF_SIZE));
+    function _getIndex(bytes memory _payload) internal pure returns (uint256) {
+        return uint256(bytes32(_getSlice(_payload, ID_STARTS, ID_STARTS + ID_BUF_SIZE)));
     }
 
     function _getAddress(bytes memory _payload) internal pure returns (address) {

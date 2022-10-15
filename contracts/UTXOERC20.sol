@@ -33,7 +33,7 @@ contract UTXOERC20 is IUTXOERC20, Ownable {
         require(IChecker(checkers[_utxo._version]).validateUTXO(_amount, _utxo._payload), "invalid UTXO");
 
         bytes memory _payloadWithSender = bytes.concat(abi.encodePacked(msg.sender), _payload);
-        require(IChecker(checkers[_utxo._version]).check(_utxo._payload, _payloadWithSender), "UTXO conditions is not satisfied");
+        require(IChecker(checkers[_utxo._version]).check(_utxo._payload, _payloadWithSender, new bytes[](0)), "UTXO conditions is not satisfied");
 
         utxos[_utxoId]._spent = true;
         IERC20(_utxo._token).transfer(msg.sender, _amount);
@@ -61,7 +61,7 @@ contract UTXOERC20 is IUTXOERC20, Ownable {
             _in[_i] = _utxo._payload;
 
             bytes memory _payloadWithSender = bytes.concat(abi.encodePacked(msg.sender), _payloads[_i]);
-            require(IChecker(checkers[_utxo._version]).check(_utxo._payload, _payloadWithSender), "UTXO conditions is not satisfied");
+            require(IChecker(checkers[_utxo._version]).check(_utxo._payload, _payloadWithSender, _out), "UTXO conditions is not satisfied");
 
             utxos[_ids[_i]]._spent = true;
             emit UTXOSpent(_ids[_i], msg.sender);

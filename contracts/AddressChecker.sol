@@ -16,7 +16,7 @@ contract AddressChecker is IChecker {
 
     uint8 public constant FULL_SIZE = AMOUNT_BUF_SIZE + ADDRESS_BUF_SIZE;
 
-    function check(bytes memory _utxoPayload, bytes memory _proofPayload) public pure override returns (bool) {
+    function check(bytes memory _utxoPayload, bytes memory _proofPayload, bytes[] memory) public pure override returns (bool) {
         return address(bytes20(_proofPayload)) == _getAddress(_utxoPayload);
     }
 
